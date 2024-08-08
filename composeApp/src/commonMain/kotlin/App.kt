@@ -7,7 +7,6 @@ import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.material.TextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -17,13 +16,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import kotlinx.datetime.Clock
-import kotlinx.datetime.IllegalTimeZoneException
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
 
-data class Country(val name: String, val zone: TimeZone)
+data class Country(val name: String, val zone: TimeZone, /*val image: DrawableResource*/)
 
 fun currentTimeAt(location: String, zone: TimeZone): String {
     fun LocalTime.formatted() = "$hour:$minute:$second"
@@ -34,17 +32,17 @@ fun currentTimeAt(location: String, zone: TimeZone): String {
     return "The time in $location is ${localTime.formatted()}"
 }
 
-fun countries() = listOf(
-    Country("Japan", TimeZone.of("Asia/Tokyo")),
-    Country("France", TimeZone.of("Europe/Paris")),
-    Country("Mexico", TimeZone.of("America/Mexico_City")),
-    Country("Indonesia", TimeZone.of("Asia/Jakarta")),
-    Country("Egypt", TimeZone.of("Africa/Cairo")),
+val defaultCountries = listOf(
+    Country("Japan", TimeZone.of("Asia/Tokyo"), /*Res.drawable.jp*/),
+    Country("France", TimeZone.of("Europe/Paris"), /*Res.drawable.fr*/),
+    Country("Mexico", TimeZone.of("America/Mexico_City"), /*Res.drawable.mx*/),
+    Country("Indonesia", TimeZone.of("Asia/Jakarta"), /*Res.drawable.id*/),
+    Country("Egypt", TimeZone.of("Africa/Cairo"), /*Res.drawable.eg*/)
 )
 
 @Composable
 @Preview
-fun App(countries: List<Country> = countries()) {
+fun App(countries: List<Country> = defaultCountries) {
     MaterialTheme {
         var showCountries by remember { mutableStateOf(false) }
         var timeAtLocation by remember { mutableStateOf("No location selected") }
@@ -61,15 +59,22 @@ fun App(countries: List<Country> = countries()) {
                     expanded = showCountries,
                     onDismissRequest = { showCountries = false }
                 ) {
-                    countries().forEach { (name, zone) ->
+                    countries.forEach { (name, zone) ->
                         DropdownMenuItem(
                             onClick = {
                                 timeAtLocation = currentTimeAt(name, zone)
                                 showCountries = false
                             }
                         ) {
-                            Text(name)
-                        }
+//                            Row(verticalAlignment = Alignment.CenterVertically) {
+//                                Image(
+//                                    painterResource(image),
+//                                    modifier = Modifier.size(50.dp).padding(end = 10.dp),
+//                                    contentDescription = "$name flag"
+//                                )
+                                Text(name)
+                            }
+//                        }
                     }
                 }
             }
